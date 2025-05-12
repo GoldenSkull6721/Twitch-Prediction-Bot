@@ -46,30 +46,37 @@ def how_much_to_bet(six_p, current_loop):
     if current_loop == 1:
         return six_p
     elif current_loop == 2:
-        return six_p * 2
+        return six_p 
     elif current_loop == 3:
-        return six_p * 4
+        return six_p
     elif current_loop == 4:
-        return six_p * 8
+        return six_p
 
 
 def time_set(total_time):
     """
-    Sleeps until time =< 1 minute
-    :param total_time: Total time remaining on an active prediction
+    Sleeps until there are only 5 seconds remaining on an active prediction.
+    
+    :param total_time: Total time remaining on an active prediction in "mm:ss" format.
+                       If total_time starts with "Prediction", the function returns immediately.
     :return: None
     """
-    time_remaining = total_time.split(":")
-    if time_remaining[0] == "Prediction":
+    # Check if total_time indicates a non-numeric value.
+    if total_time.startswith("Prediction"):
         return
-    minutes = int(time_remaining[0])
-    seconds = int(time_remaining[1])
 
-    if minutes == 0:
+    # Split the total_time string at the colon.
+    minutes_str, seconds_str = total_time.split(":")
+    minutes = int(minutes_str)
+    seconds = int(seconds_str)
+    
+    # Calculate total time in seconds.
+    total_seconds = minutes * 60 + seconds
+    
+    # If total time is 5 seconds or less, there's no sleeping to be done.
+    if total_seconds <= 5:
         return
-    elif minutes == 1:
-        time.sleep(seconds)
-        return
-    else:
-        time.sleep(((minutes - 1) * 60) + seconds)
-        return
+    
+    # Sleep for total_seconds minus 5 seconds, so that 5 seconds remain.
+    sleep_time = total_seconds - 5
+    time.sleep(sleep_time)
